@@ -1,0 +1,206 @@
+/* Reel mode (?reel): a fixed 1080x1920 stage, scaled to fit the window, ready for screen recording. */
+body.reel { overflow: hidden; background: #000; }
+body.reel .toolbar { display: none; }
+
+.reel-stage {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 1080px;
+  height: 1920px;
+  transform-origin: center;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 110px 60px 56px;
+  background:
+    radial-gradient(900px 800px at 50% 48%, #0d2a18, transparent 70%),
+    radial-gradient(140% 100% at 50% 50%, transparent 55%, rgb(0 0 0 / 0.85)),
+    var(--crt);
+}
+
+/* The CRT glass: a rounded bezel edge and a faint dot grid. */
+.reel-stage::before {
+  content: "";
+  position: absolute;
+  inset: 26px;
+  border: 2px solid rgb(61 255 139 / 0.14);
+  border-radius: 44px;
+  background: radial-gradient(circle, rgb(61 255 139 / 0.16) 1.2px, transparent 1.6px) 0 0 / 36px 36px;
+  box-shadow: inset 0 0 140px rgb(61 255 139 / 0.07), 0 0 40px rgb(61 255 139 / 0.06);
+  mask: radial-gradient(120% 90% at 50% 50%, #000 40%, transparent 85%);
+  pointer-events: none;
+}
+
+/* Rolling refresh band, like an old monitor filmed on camera. */
+.reel-stage::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 260px;
+  background: linear-gradient(180deg, transparent, rgb(61 255 139 / 0.06), transparent);
+  animation: roll 7s linear infinite;
+  pointer-events: none;
+  z-index: 45;
+}
+
+@keyframes roll { from { translate: 0 -260px; } to { translate: 0 1920px; } }
+
+.reel-title {
+  position: relative;
+  text-align: center;
+  font-family: var(--term);
+  line-height: 0.85;
+  text-shadow: var(--glow);
+}
+
+.reel-eyebrow {
+  display: inline-block;
+  margin-bottom: 30px;
+  padding: 8px 22px 6px;
+  border: 2px solid var(--phosphor);
+  border-radius: 4px;
+  color: var(--phosphor);
+  font: 400 38px/1 var(--term);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  box-shadow: 0 0 18px rgb(61 255 139 / 0.3), inset 0 0 12px rgb(61 255 139 / 0.15);
+}
+
+.reel-eyebrow::before { content: "> "; color: var(--amber); text-shadow: var(--glow-amber); }
+
+.reel-title h1 { margin: 0; font: 400 170px/0.85 var(--term); letter-spacing: 4px; color: var(--phosphor-hot); text-transform: uppercase; }
+.reel-title h1 span { color: var(--amber); text-shadow: var(--glow-amber); }
+
+.reel-demo {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+}
+
+.reel-demo > * { transform: scale(var(--demo-scale, 1.55)); }
+
+/* Code window: a terminal pane */
+.reel-code {
+  position: relative;
+  border: 2px solid rgb(61 255 139 / 0.45);
+  border-radius: 14px;
+  background: rgb(3 8 5 / 0.92);
+  box-shadow: 0 0 40px rgb(61 255 139 / 0.15), inset 0 0 40px rgb(61 255 139 / 0.05);
+  overflow: hidden;
+}
+
+.reel-code header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 24px 12px;
+  border-bottom: 2px dashed rgb(61 255 139 / 0.28);
+  color: var(--muted);
+  font: 400 32px/1 var(--term);
+  text-shadow: var(--glow);
+}
+
+.reel-code header i { width: 14px; height: 14px; display: inline-block; background: var(--phosphor-dim); }
+.reel-code header i:nth-child(1) { background: var(--amber); }
+.reel-code header i:nth-child(3) { background: rgb(61 255 139 / 0.25); margin-right: 10px; }
+
+.reel-code pre {
+  margin: 0;
+  padding: 24px 30px 30px;
+  font: 400 23px/1.5 var(--mono);
+  color: #9dffc3;
+  white-space: pre;
+  text-shadow: 0 0 6px rgb(61 255 139 / 0.35);
+}
+
+/* Token colours used by highlight() in reel.js: a phosphor palette with amber accents */
+.tk-k { color: var(--amber); }
+.tk-s { color: #d6ffe6; }
+.tk-n { color: var(--amber-hot); }
+.tk-c { color: #3f9e66; font-style: italic; }
+.tk-f { color: var(--phosphor); font-weight: 600; }
+.tk-p { color: #7fe0a8; }
+
+.reel-handle {
+  position: relative;
+  margin-top: 34px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  color: var(--phosphor);
+  font: 400 40px/1 var(--term);
+  text-shadow: var(--glow);
+}
+
+.reel-handle img { width: 54px; height: 54px; border-radius: 50%; box-shadow: 0 0 0 2px var(--phosphor), 0 0 18px rgb(61 255 139 / 0.5); }
+
+/* End card */
+.reel-outro {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 34px;
+  background: rgb(4 8 6 / 0.95);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s steps(6);
+  text-align: center;
+  font-family: var(--term);
+  text-shadow: var(--glow);
+}
+
+.reel-outro.show { opacity: 1; }
+.reel-outro img { width: 220px; height: 220px; border-radius: 50%; box-shadow: 0 0 0 4px var(--phosphor), 0 0 60px rgb(61 255 139 / 0.6); }
+.reel-outro strong { font: 400 84px/1 var(--term); color: var(--phosphor-hot); }
+.reel-outro p { margin: 0; color: var(--muted); font-size: 46px; }
+.reel-outro b { font-weight: 400; color: var(--amber); text-shadow: var(--glow-amber); }
+
+/* Fake cursor used by the autoplay script */
+.reel-cursor {
+  position: absolute;
+  z-index: 50;
+  width: 44px;
+  height: 44px;
+  margin: -6px 0 0 -6px;
+  pointer-events: none;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  filter: drop-shadow(0 0 6px rgb(61 255 139 / 0.7));
+}
+
+.reel-cursor::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  width: 56px;
+  height: 56px;
+  margin: -28px 0 0 -28px;
+  border: 3px solid var(--phosphor);
+  border-radius: 50%;
+  transform: scale(0);
+  opacity: 0;
+}
+
+.reel-cursor.press::after { animation: cursor-press 0.45s ease-out; }
+
+@keyframes cursor-press {
+  from { transform: scale(0.2); opacity: 1; }
+  to { transform: scale(1.4); opacity: 0; }
+}
+
+/* Demo-only helpers (hints, live-region text) are noise in a video. */
+.reel .reel-hide, .autoplay .reel-hide, body.autoplay .toolbar { display: none !important; }
+
+/* 4:5 stage (Instagram carousel): tighter spacing, slightly smaller title */
+.reel-stage.compact { padding: 74px 60px 46px; }
+.reel-stage.compact .reel-title h1 { font-size: 150px; }
+.reel-stage.compact .reel-eyebrow { margin-bottom: 20px; }

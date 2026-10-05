@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rocket deploy button · UI animations</title>
+  <meta name="description" content="A retro CRT terminal deploy button: build, test and upload logs stream in, a countdown runs and a vector rocket lifts off.">
+  <meta name="theme-color" content="#040806">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=VT323&display=swap">
+  <link rel="stylesheet" href="reel/theme.css">
+  <link rel="stylesheet" href="reel/reel.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="demo-page">
+    <section class="deploy" data-state="idle" aria-labelledby="deploy-title">
+      <div class="fx" aria-hidden="true"></div>
+
+      <header class="term-bar">
+        <span class="term-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <h2 id="deploy-title" class="term-path">arslan@portfolio:~/app</h2>
+        <span class="term-branch"><i aria-hidden="true"></i><span class="term-env">main</span></span>
+      </header>
+
+      <div class="term-body">
+        <p class="term-cmd"><span class="ps1">$</span> git push <b>production</b></p>
+        <p class="term-meta">3 commits ready · 12 files changed</p>
+        <ol class="term-log" aria-live="polite"></ol>
+      </div>
+
+      <button class="ship" type="button">
+        <span class="ship-label"><span class="ship-text">&gt; Deploy</span><span class="ship-caret" aria-hidden="true"></span></span>
+        <!-- Inverse-video copy of the label, revealed left to right as the deploy progresses -->
+        <span class="ship-fill" aria-hidden="true"><span class="ship-label"><span class="ship-text">&gt; Deploy</span><span class="ship-caret"></span></span></span>
+      </button>
+    </section>
+  </main>
+
+  <nav class="toolbar" aria-label="Demo links">
+    <a href="https://www.instagram.com/arslanagayev.dev/">More animations</a>
+    <a href="?reel">&gt; Reel mode</a>
+    <a href="https://github.com/arslanagayev/deploy-button-animation">Source</a>
+  </nav>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>

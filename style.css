@@ -1,0 +1,148 @@
+/* A terminal window on a CRT: phosphor text with bloom, dark glass, a faint inner glow. */
+.deploy {
+  position: relative;
+  width: min(460px, 100%);
+  border: 1.5px solid rgb(61 255 139 / 0.4);
+  border-radius: 14px;
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgb(61 255 139 / 0.07), transparent 60%),
+    linear-gradient(180deg, var(--crt-2), var(--crt));
+  box-shadow:
+    0 0 0 1px #000,
+    0 0 50px rgb(61 255 139 / 0.14),
+    inset 0 0 50px rgb(61 255 139 / 0.06),
+    0 30px 60px rgb(0 0 0 / 0.6);
+  font-family: var(--term);
+  color: var(--phosphor);
+  text-shadow: var(--glow);
+}
+
+/* Rocket, smoke and exhaust live here; they may fly far outside the card. */
+.fx { position: absolute; inset: 0; overflow: visible; pointer-events: none; z-index: 6; }
+
+.term-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1.5px dashed rgb(61 255 139 / 0.28);
+}
+
+.term-dots { display: flex; gap: 6px; }
+.term-dots i { width: 10px; height: 10px; background: var(--phosphor-dim); box-shadow: 0 0 6px rgb(61 255 139 / 0.5); }
+.term-dots i:first-child { background: var(--amber); box-shadow: 0 0 6px rgb(255 182 39 / 0.6); }
+.term-dots i:last-child { background: rgb(61 255 139 / 0.25); box-shadow: none; }
+
+.term-path { flex: 1; margin: 0; font-size: 21px; font-weight: 400; color: var(--muted); }
+
+.term-branch {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 1px 9px;
+  border: 1.5px solid rgb(61 255 139 / 0.45);
+  border-radius: 3px;
+  font-size: 19px;
+}
+
+.term-branch i { width: 7px; height: 7px; background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+.deploy[data-state="live"] .term-branch i { background: var(--phosphor); box-shadow: 0 0 8px var(--phosphor); animation: pulse 1s steps(2) infinite; }
+
+.term-body { padding: 16px 20px 4px; }
+
+.term-cmd { margin: 0; font-size: 30px; line-height: 1.1; }
+.term-cmd .ps1 { color: var(--amber); text-shadow: var(--glow-amber); }
+.term-cmd b { font-weight: 400; color: var(--phosphor-hot); }
+
+.term-meta { margin: 4px 0 12px; font-size: 20px; color: var(--muted); }
+
+/* Pipeline log: "> name   value" rows with a fixed height so nothing jumps. */
+.term-log {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  min-height: 150px;
+  font-size: 24px;
+  line-height: 30px;
+}
+
+.term-log li { display: grid; grid-template-columns: 2ch 8ch 1fr; animation: line-in 0.18s steps(3); }
+.log-ps { color: var(--phosphor-dim); }
+.log-value { white-space: pre; }
+.log-value b { font-weight: 400; color: var(--phosphor-hot); }
+.log-value .dim { color: var(--muted); }
+.log-value.hot, .log-value .url { color: var(--amber); text-shadow: var(--glow-amber); }
+.log-value .url { text-decoration: underline; text-underline-offset: 4px; }
+
+/* The button: an outlined block that inverts (green on black -> black on green) as it fills. */
+.ship {
+  --p: 0;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: calc(100% - 40px);
+  height: 58px;
+  margin: 10px 20px 20px;
+  padding: 0;
+  border: 2px solid var(--phosphor);
+  border-radius: 5px;
+  background: rgb(61 255 139 / 0.05);
+  color: var(--phosphor);
+  font: 400 32px/1 var(--term);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: var(--glow);
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 0 18px rgb(61 255 139 / 0.25), inset 0 0 14px rgb(61 255 139 / 0.12);
+}
+
+.ship-label { display: inline-flex; align-items: center; gap: 6px; }
+.ship-caret { width: 0.5em; height: 0.8em; background: currentColor; box-shadow: var(--glow); animation: blink 1s steps(1) infinite; }
+
+.ship-fill {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--phosphor);
+  color: var(--crt);
+  text-shadow: none;
+  clip-path: inset(0 calc((1 - var(--p)) * 100%) 0 0);
+  transition: clip-path 0.12s steps(4);
+}
+
+.ship-fill .ship-caret { box-shadow: none; }
+.deploy[data-state="idle"] .ship:hover .ship-fill,
+.deploy[data-state="idle"] .ship:focus-visible .ship-fill { clip-path: inset(0); }
+.ship:focus-visible { outline: 2px dashed var(--amber); outline-offset: 5px; }
+.ship:disabled { cursor: progress; }
+.deploy[data-state="live"] .ship { cursor: pointer; box-shadow: 0 0 34px rgb(61 255 139 / 0.55); }
+
+/* Vector-display rocket: glowing strokes, amber flame */
+.rocket {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 80px;
+  height: 160px;
+  filter: drop-shadow(0 0 3px var(--phosphor)) drop-shadow(0 0 12px rgb(61 255 139 / 0.55));
+}
+
+.rocket svg { width: 100%; height: 100%; overflow: visible; }
+.rocket .line { fill: rgb(4 8 6 / 0.85); stroke: var(--phosphor-hot); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.rocket .flame { fill: rgb(255 182 39 / 0.3); stroke: var(--amber); stroke-width: 2; opacity: 0; transform-box: fill-box; transform-origin: 50% 0; scale: 1 var(--thrust, 1); }
+.rocket.lit .flame { opacity: 1; animation: flicker 0.09s steps(2) infinite alternate; }
+
+/* Smoke rings and exhaust sparks (positioned and animated from JS) */
+.puff, .spark { position: absolute; left: 0; top: 0; border-radius: 50%; }
+.puff { width: 18px; height: 18px; margin: -9px 0 0 -9px; border: 1.5px solid var(--phosphor); box-shadow: 0 0 8px rgb(61 255 139 / 0.6), inset 0 0 6px rgb(61 255 139 / 0.4); }
+.spark { width: 6px; height: 6px; margin: -3px 0 0 -3px; background: var(--amber-hot); box-shadow: 0 0 8px var(--amber), 0 0 16px var(--amber); }
+
+@keyframes blink { 50% { opacity: 0; } }
+@keyframes pulse { 50% { opacity: 0.3; } }
+@keyframes flicker { from { transform: scale(0.9, 0.75); } to { transform: scale(1.05, 1.3); } }
+@keyframes line-in { from { opacity: 0; } }
+
+/* Reel mode: room above the card for the rocket to rise into */
+.reel .deploy { margin-top: 40px; }
